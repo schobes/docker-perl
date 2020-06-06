@@ -1,9 +1,15 @@
-VERSION		:= stable
+VERSION		:= latest
 
 USER        ?= schobes
 PWD			:= $(shell basename `pwd`)
 REPOSITORY	:= $(USER)/$(PWD)
 NAME		:= $(REPOSITORY):$(VERSION)
+
+ifeq ($(VERSION),latest)
+PERL_VERSION=stable
+else
+PERL_VERSION=$(VERSION)
+endif
 
 ifdef FORCE
 ARG_FORCE=--build-arg FORCE=--force
@@ -14,14 +20,11 @@ endif
 
 .PHONY: build
 build:
-	docker build $(DOCKER_BUILD_OPTS) ../$(PWD) --build-arg VERSION=$(VERSION) $(ARG_FORCE) $(ARG_NOTEST)
-	IMAGE_ID=`docker build ../$(PWD) --build-arg VERSION=$(VERSION) $(ARG_FORCE) $(ARG_NOTEST) 2>&1| grep 'Successfully built' | cut -d' ' -f 3`; \
-	docker tag $$IMAGE_ID $(NAME); \
-	PV=`docker run --name get_perl_version $(NAME) ls /opt/perlbrew/perls | cut -d '-' -f 2`; \
-	if [ "$$PV" != "$$VERSION" ]; then \
-		docker tag $$IMAGE_ID $(REPOSITORY):$$PV; \
+	docker build $(DOCKER_BUILD_OPTS) -t $(NAME) --build-arg VERSION=$(PERL_VERSION) $(ARG_FORCE) $(ARG_NOTEST) ./
+	PV=`docker run --rm $(NAME) ls /opt/perlbrew/perls | cut -d '-' -f 2 |grep -v perl`; \
+	if [ "$$PV" != "$(PERL_VERSION)" ]; then \
+		docker tag $(NAME) $(REPOSITORY):$$PV; \
 	fi
-	docker rm get_perl_version
 
 .PHONY: all
 all: install
@@ -29,9 +32,8 @@ all: install
 .PHONY: install
 install: build
 	docker push $(NAME)
-	PV=`docker run --name get_perl_version $(NAME) ls /opt/perlbrew/perls | cut -d '-' -f 2`; \
-	if [ "$$PV" != "$$VERSION" ]; then \
+	PV=`docker run --rm $(NAME) ls /opt/perlbrew/perls | cut -d '-' -f 2 |grep -v perl`; \
+	if [ "$$PV" != "$(PERL_VERSION)" ]; then \
 		docker push $(REPOSITORY):$$PV; \
 	fi
-	docker rm get_perl_version
 

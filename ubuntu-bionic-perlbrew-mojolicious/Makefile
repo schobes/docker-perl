@@ -7,7 +7,7 @@ NAME		:= $(REPOSITORY):$(VERSION)
 
 .PHONY: build
 build:
-	docker build $(DOCKER_BUILD_OPTS) ../$(PWD) -t $(NAME)
+	docker build $(DOCKER_BUILD_OPTS) -t $(NAME) ./
 
 .PHONY: all
 all: install

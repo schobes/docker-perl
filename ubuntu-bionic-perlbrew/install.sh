@@ -11,5 +11,7 @@ if [ "$rv" != "0" ]; then
     exit 1 
 else 
     perlbrew clean 
+    rm -f /opt/perlbrew/build.*.log
+    PERL_VERSION=`ls /opt/perlbrew/perls | cut -d '-' -f 2`
+    perlbrew alias create perl-$PERL_VERSION perl
 fi
-
