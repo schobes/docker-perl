@@ -9,4 +9,6 @@ ARG FORCE
 ARG NOTEST
 
 COPY install.sh /opt/install.sh
-RUN /bin/bash /opt/install.sh
+RUN /bin/bash /opt/install.sh && rm -f /opt/install.sh
+
+COPY perl-exec /opt/perl-exec

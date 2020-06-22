@@ -1,0 +1,4 @@
+#!/bin/bash
+PERLBREW_PERL_VERSION=`ls /opt/perlbrew/perls/ |grep -P '^perl-\d+\.\d+\.\d+$'`
+/opt/perlbrew/bin/perlbrew exec --with $PERLBREW_PERL_VERSION $@
+exit $?

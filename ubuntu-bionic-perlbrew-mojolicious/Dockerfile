@@ -7,50 +7,35 @@ RUN echo "deb http://apt.postgresql.org/pub/repos/apt/ bionic-pgdg main" > /etc/
 RUN curl -s https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add -
 
 RUN apt-get update
-RUN DEBIAN_FRONTEND=noninteractive apt-get install -y perl openssl libssl-dev zlib1g-dev postgresql-client-12 libpq-dev 
+RUN DEBIAN_FRONTEND=noninteractive apt-get install -y openssl libssl-dev zlib1g-dev postgresql-client-12 libpq-dev 
 
 ENV HARNESS_OPTIONS=j6
 
-RUN /opt/perlbrew/bin/perlbrew exec --with 'perl' cpanm Mojolicious
-RUN /opt/perlbrew/bin/perlbrew exec --with 'perl' cpanm IO::Socket::SSL
-RUN /opt/perlbrew/bin/perlbrew exec --with 'perl' cpanm EV
+RUN /opt/perl-exec cpanm Mojolicious
+RUN /opt/perl-exec cpanm IO::Socket::SSL
+RUN /opt/perl-exec cpanm EV
 
-RUN /opt/perlbrew/bin/perlbrew exec --with 'perl' cpanm Minion
+RUN /opt/perl-exec cpanm Minion
 
-RUN /opt/perlbrew/bin/perlbrew exec --with 'perl' cpanm Moo
-RUN /opt/perlbrew/bin/perlbrew exec --with 'perl' cpanm Moops
+RUN /opt/perl-exec cpanm Moo
+RUN /opt/perl-exec cpanm Moops
 
-RUN /opt/perlbrew/bin/perlbrew exec --with 'perl' cpanm Mojolicious::Plugin::AccessLog
-RUN /opt/perlbrew/bin/perlbrew exec --with 'perl' cpanm MojoX::Log::Log4perl
+RUN /opt/perl-exec cpanm Mojolicious::Plugin::AccessLog
+RUN /opt/perl-exec cpanm MojoX::Log::Log4perl
 
-RUN /opt/perlbrew/bin/perlbrew exec --with 'perl' cpanm Mojolicious::Plugin::CHI
-RUN /opt/perlbrew/bin/perlbrew exec --with 'perl' cpanm Cache::Memcached
-RUN /opt/perlbrew/bin/perlbrew exec --with 'perl' cpanm CHI::Driver::Memcached
+RUN /opt/perl-exec cpanm Mojolicious::Plugin::CHI
+RUN /opt/perl-exec cpanm Cache::Memcached
+RUN /opt/perl-exec cpanm CHI::Driver::Memcached
 
-RUN /opt/perlbrew/bin/perlbrew exec --with 'perl' cpanm Mojolicious::Plugin::AssetPack
-RUN /opt/perlbrew/bin/perlbrew exec --with 'perl' cpanm JavaScript::Minifier::XS
-RUN /opt/perlbrew/bin/perlbrew exec --with 'perl' cpanm CSS::Minifier::XS
+RUN /opt/perl-exec cpanm Mojolicious::Plugin::AssetPack
+RUN /opt/perl-exec cpanm JavaScript::Minifier::XS
+RUN /opt/perl-exec cpanm CSS::Minifier::XS
 
 ## TODO: Check on --notest for DBD::Pg from time to time
-RUN /opt/perlbrew/bin/perlbrew exec --with 'perl' cpanm --notest DBD::Pg
-RUN /opt/perlbrew/bin/perlbrew exec --with 'perl' cpanm Mojo::Pg
+RUN /opt/perl-exec cpanm --notest DBD::Pg
+RUN /opt/perl-exec cpanm Mojo::Pg
 
-RUN /opt/perlbrew/bin/perlbrew exec --with 'perl' cpanm Perl::Tidy::Sweetened
-RUN /opt/perlbrew/bin/perlbrew exec --with 'perl' cpanm Perl::Critic
-RUN /opt/perlbrew/bin/perlbrew exec --with 'perl' cpanm Test2::Suite
-
-
-## Rebuild so we can make the size a bit smaller
-FROM schobes/ubuntu-bionic-perlbrew:latest
-ENV PERLBREW_ROOT=/opt/perlbrew
-ENV PERLBREW_HOME=/opt/perlbrew/perl5
-COPY --from=builder /opt/perlbrew /opt/perlbrew
-
-RUN echo "deb http://apt.postgresql.org/pub/repos/apt/ bionic-pgdg main" > /etc/apt/sources.list.d/pgdg.list
-RUN curl -s https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add -
-
-RUN apt-get update && \
-DEBIAN_FRONTEND=noninteractive apt-get install -y perl openssl postgresql-client-12 \
-    && rm -rf /var/lib/apt/lists/* \
-    && apt-get autoclean
+RUN /opt/perl-exec cpanm Perl::Tidy::Sweetened
+RUN /opt/perl-exec cpanm Perl::Critic
+RUN /opt/perl-exec cpanm Test2::Suite
 
