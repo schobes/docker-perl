@@ -35,7 +35,7 @@ RUN /opt/perl-exec cpanm CSS::Minifier::XS
 RUN /opt/perl-exec cpanm --notest DBD::Pg
 RUN /opt/perl-exec cpanm Mojo::Pg
 
-RUN /opt/perl-exec cpanm Perl::Tidy::Sweetened
+RUN /opt/perl-exec cpanm --notest Perl::Tidy::Sweetened
 RUN /opt/perl-exec cpanm Perl::Critic
 RUN /opt/perl-exec cpanm Test2::Suite
 
