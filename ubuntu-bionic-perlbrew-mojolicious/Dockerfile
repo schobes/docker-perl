@@ -23,6 +23,7 @@ RUN /opt/perl-exec cpanm Moops
 RUN /opt/perl-exec cpanm Mojolicious::Plugin::AccessLog
 RUN /opt/perl-exec cpanm MojoX::Log::Log4perl
 
+RUN HARNESS_OPTIONS=j1 /opt/perl-exec cpanm Cache::Cache
 RUN /opt/perl-exec cpanm Mojolicious::Plugin::CHI
 RUN /opt/perl-exec cpanm Cache::Memcached
 RUN /opt/perl-exec cpanm CHI::Driver::Memcached
